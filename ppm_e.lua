@@ -21,16 +21,30 @@ function lua_ppm.encode(data,width,height,depth,output_file)
 
     local scanlines = {}
 
+    local pixel_type = type(data[height][width])
+
+    local red_rshift = 1/(16^4)
+    local grn_rshift = 1/(16^2)
+
+    local depth_scale = depth/255
+
     for current_y=1,height do
         local image_line = data[current_y]
         local scanline   = ""
 
         for current_x=1,width do
             local pixel = image_line[current_x]
+            local scaled_r,scaled_g,scaled_b
 
-            local scaled_r = (pixel[1] or pixel.r) * depth
-            local scaled_g = (pixel[2] or pixel.g) * depth
-            local scaled_b = (pixel[3] or pixel.b) * depth
+            if pixel_type == "table" then
+                scaled_r = (pixel[1] or pixel.r) * depth
+                scaled_g = (pixel[2] or pixel.g) * depth
+                scaled_b = (pixel[3] or pixel.b) * depth
+            else
+                scaled_r = (pixel*red_rshift)%256 * depth_scale
+                scaled_g = (pixel*grn_rshift)%256 * depth_scale
+                scaled_b = (pixel           )%256 * depth_scale
+            end
 
             scaled_r = scaled_r - scaled_r%1
             scaled_g = scaled_g - scaled_g%1
