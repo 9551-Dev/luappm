@@ -11,8 +11,8 @@ local table_concat = table.concat
 function lua_ppm.encode(data,width,height,depth,output_file)
     local output_str = ""
 
-    width  = width  or #data[#data[1]]
-    height = height or #data[1]
+    width  = width  or #data[1]
+    height = height or #data
     depth  = depth  or 255
 
     output_str = output_str .. make_header(
